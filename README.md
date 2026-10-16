@@ -13,6 +13,7 @@ locally plausible and structurally incoherent.
 [![dependencies: none](https://img.shields.io/badge/dependencies-none-brightgreen.svg)](package.json)
 [![rules: 12](https://img.shields.io/badge/rules-12-blue.svg)](standard/STANDARD.md)
 [![checked: 12](https://img.shields.io/badge/mechanically%20checked-12%2F12-blue.svg)](enforce/frontend-check.mjs)
+[![references: 8](https://img.shields.io/badge/references-8-blue.svg)](refs/INDEX.md)
 
 </div>
 
@@ -79,6 +80,34 @@ a per-feature array. Path-zone enforcement needs one entry per feature, so it
 drifts the moment someone adds a feature. vscode's mechanism is the one to
 copy: the directory *name* is the declaration, so the config does not grow
 when the codebase does.
+
+## The references
+
+[`refs/`](refs/INDEX.md) is eight production frontends read at source and
+written up to one template, so they are comparable: Mattermost, Outline,
+element-web, AFFiNE, Grafana, PostHog, immich and lemmy-ui. Each ref records
+the decisions, the rules the project wrote down verbatim, how each decision is
+actually held (script, type, test or review), which of the twelve rules the
+codebase is evidence for, and what I did not take from it.
+
+The useful parts are the disagreements and the places a project's own
+documentation is wrong about the project. A few examples of what is in there:
+
+- **lemmy-ui** carries a four-state union across 36 files and has **zero**
+  occurrences of `isLoading`. It also has only 3 `case "failed"` branches
+  against 38 guards, so the union's guarantee is that failure cannot be
+  *mistaken* for emptiness, not that failure is rendered. The ref says so.
+- **immich** is not the layer-folder counter-example it looks like: layer at
+  depth one, feature at depth two, and 101 non-route files co-located inside
+  `routes/`. It has no mechanical import boundary at all and a measurably clean
+  graph, and `CODEOWNERS:4` explains why: one owner for 730 files.
+- **Grafana** generates 13 of its 23 lint rules from configuration so each
+  policy gets its own rule name, for suppression and reporting.
+- **lemmy-ui** runs `tsc --noEmit` inside its `lint` script, which is the
+  counter-example for FC-005: a typecheck that cannot fail on its own.
+
+Where a sparse checkout meant a claim could not be verified, the ref says which
+directory was missing rather than inferring.
 
 ## Adoption, which is settled before the rules
 

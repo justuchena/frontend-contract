@@ -115,11 +115,19 @@ This matters because it covers what the "29% of JavaScript exception handlers
 are empty" figure misses. These failures never throw, so no catch block is
 involved and no handler statistic sees them.
 
-**The structural fix, not the vigilant one.** A four-state discriminated union —
-`empty | loading | success | failed` — makes "failed" unrepresentable as
-"empty". lemmy-ui uses that shape for every server-backed field, rendered by a
-`switch`, with no `isLoading` booleans anywhere. The type does the enforcing;
-the checker only has to notice when something else is used.
+**The structural fix, not the vigilant one.** A four-state discriminated union,
+`empty | loading | success | failed`, makes "failed" unrepresentable as
+"empty". lemmy-ui carries that shape across 36 files and has **zero**
+occurrences of `isLoading`, which I counted rather than assumed.
+
+What the union guarantees is narrower than I first wrote, and worth stating
+precisely: failure cannot be *mistaken* for emptiness, because they are
+different states of the same value. It does not guarantee that failure is
+rendered. lemmy-ui has only 3 `case "failed"` branches against 38
+`=== "failed"` guards, so most failures are handled by a guard and a toast
+rather than by an exhaustive `switch`, and exhaustiveness is not switched on.
+The type closes the hole this rule is about; rendering the failed branch is
+still a decision someone has to make.
 
 ## FC-103 — A non-exception failure must be handled
 

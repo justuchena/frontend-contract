@@ -32,17 +32,17 @@ pipeline I cannot see.
 
 | Decision | What they chose | Where it is written or enforced |
 | --- | --- | --- |
-| Top-level structure | npm workspaces: `channels/` plus `platform/{client,components,shared,types,eslint-plugin,mattermost-redux}` | root `webapp/package.json` `workspaces` |
+| Top-level structure | npm workspaces: `channels/` plus `platform/{client,components,shared,types,eslint-plugin,mattermost-redux}` | `webapp/package.json:100-107` |
 | Structure inside the app | Layer-based at the top of `channels/src`, folder-by-feature below `components/` | `channels/src/components/CLAUDE.OPTIONAL.md:4` |
 | Feature folder shape | `index.ts` re-export, `my_component.tsx`, `my_component.scss`, `my_component.test.tsx` | `channels/src/components/CLAUDE.OPTIONAL.md:12-15` |
-| Shared UI | A published package, not a folder; import by package name only | `AGENTS.md:21` |
+| Shared UI | A published package, not a folder; import by package name only | `AGENTS.md:22` |
 | Data layer | One singleton `Client4`, 5,511 lines, every route derived from `getBaseRoute()` | `platform/client/src/client4.ts:277` |
 | Base URL and auth | Instance state set once at boot | `client4.ts:171`, `:189-190`, `:217`, `:229-234` |
 | Who calls the client | Redux actions only, and bypassing it requires a written reason | `STYLE_GUIDE.md:114`, `:126` |
 | New endpoints | Added to `Client4` in `platform/client`, nowhere else | `STYLE_GUIDE.md:127` |
 | Error handling in actions | `bindClientFunc`, or try/catch with `forceLogoutIfNecessary` + `logError` | `STYLE_GUIDE.md:115` |
 | Action return shape | `{data}` or `{error}`, always | `STYLE_GUIDE.md:113` |
-| State split | `state.entities` for server data, `state.views` for web-app state | `STYLE_GUIDE.md:122`, `channels/src/types/store/index.ts:21-25` |
+| State split | `state.entities` for server data, `state.views` for web-app state | `STYLE_GUIDE.md:122`, `channels/src/types/store/index.ts:20-24` |
 | UI slices | `channels/src/reducers/views/*`, one file per surface | directory, 25+ slices |
 | Redux access | `useSelector`/`useDispatch` over `connect` for new components | `STYLE_GUIDE.md:21` |
 | Selector memoization | `createSelector` for any new object or array; `makeGet…` factory for parameterised | `STYLE_GUIDE.md:117`, `:119` |
@@ -90,7 +90,7 @@ of one-client in any of the four repos:
 >   `state.entities`, and put web app state that needs to be persisted outside
 >   of `mattermost-redux` and in `state.views`.
 
-`AGENTS.md:21`, the import form, an anti-rule:
+`AGENTS.md:22`, the import form, an anti-rule:
 
 > Always import via the full package name (`@mattermost/shared/...`), never via
 > relative paths into `platform/shared/`.
@@ -110,7 +110,7 @@ is prose only:
 >   `tests/react_testing_utils`, which re-exports everything from
 >   `@testing-library/react` alongside project-specific helpers.
 
-`channels/src/plugins/published_modals.ts:30` and `:43-44`, two comments that
+`channels/src/plugins/published_modals.ts:30` and `:42-43`, two comments that
 carry a whole enforcement scheme:
 
 > // Curated allowlist, not an escape hatch for rendering arbitrary core components.
@@ -160,7 +160,7 @@ type AssertPublishedModalContract = ContractHonored<PublishedModalProps>;
 
 If a real component's props change, `tsc -b` fails in that file, at the
 boundary, with a name that says what broke, instead of in a plugin months later.
-`canOpenPublishedModal` at `:59` is a type guard built from `Object.keys` of the
+`canOpenPublishedModal` at `:58` is a type guard built from `Object.keys` of the
 allowlist, so a plugin on a different app version can feature-detect and have
 the check narrow its type. `AGENTS.md` protects the trick from cleanup by naming
 it and telling you not to delete the apparently-unused aliases. It costs zero
@@ -184,7 +184,7 @@ covers the error-boundary HOC itself.
 
 **By review.** The testing-library import rule. The `state.entities` versus
 `state.views` placement: the types describe the split
-(`channels/src/types/store/index.ts:21-25`) but nothing stops a server payload
+(`channels/src/types/store/index.ts:20-24`) but nothing stops a server payload
 from landing in a `views` slice. The one file pinned to one person is
 `/webapp/channels/src/packages/mattermost-redux/src/store/configureStore.ts`
 (`CODEOWNERS:1`), which is review as enforcement for a single file.
@@ -215,11 +215,11 @@ configs manage, but neither holds anything.
   Two targets, two gates.
 - **FC-006.** `channels/eslint.config.mjs:72-77` bans
   `@mattermost/*/src/*` with *"Don't include the src folder when importing from
-  packages in webapp/platform"*, and `AGENTS.md:21` bans relative paths into
+  packages in webapp/platform"*, and `AGENTS.md:22` bans relative paths into
   `platform/shared/`. Both name the allowed form, which is the half of FC-006
   that most configs skip.
 - **FC-007.** The strongest evidence for the recovery half. `withErrorBoundary`
-  passes `clearError` to the fallback (`index.tsx:34-48`), and
+  passes `clearError` to the fallback (`index.tsx:35-50`), and
   `components/post/post_error_boundary.tsx` renders *"An error occurred while
   rendering this post."* with a Retry button that calls it. Recovery in place,
   at the smallest seam whose failure differs from its parent's: one post.

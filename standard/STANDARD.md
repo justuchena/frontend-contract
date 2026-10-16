@@ -89,10 +89,13 @@ State that belongs in the URL — filters, pagination, tabs, the selected
 thing — is read from and written to the URL, at the route level only. No
 mirroring it into a store, and no second component also syncing it.
 
-**Evidence.** Only two surveyed repos write a URL-state rule at all, and both
-independently say *one level*: Supabase via `nuqs`, PostHog by restricting
-`urlToAction` to the scene logic. affine states the principle directly — the
-URL of the active view is the URL of the application.
+**Evidence.** Only one surveyed repo writes a URL-state rule down: Supabase,
+via `nuqs`. PostHog reaches the same place by convention rather than by rule,
+and the distinction matters: `urlToAction` appears in 130 files and 122 of them
+are logic files, but I could not find that stated in `AGENTS.md`, `CLAUDE.md`
+or `CONTRIBUTING.md`, so it is a measured practice and not a published rule.
+affine states the principle directly: the URL of the active view is the URL of
+the application.
 
 **Not saying.** That everything belongs in the URL. Only that whatever does
 has one owner.
