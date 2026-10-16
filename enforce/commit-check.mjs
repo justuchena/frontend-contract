@@ -48,8 +48,11 @@ const SCOPES = [
    published, and rewriting them would mean force-pushing a public history so
    that a repo about honest receipts looked tidier than it was. So they are
    named here rather than quietly skipped: `--range all` reports how many were
-   exempt, and everything after them is checked. Delete this the day the
-   history is rewritten. */
+   exempt, and everything after them is checked. `main` is now protected
+   against a force-push, so this is permanent rather than pending — which is
+   the right way round: a protection that bends for the maintainer is not one,
+   and the alternative was a tidier history that lied about how it was
+   written. */
 const PRE_CONVENTION = "c99cd12";
 
 const SUBJECT = /^(?<type>[a-z]+)(?:\((?<scope>[a-z0-9,\-/]+)\))?(?<breaking>!)?: (?<subject>.+)$/;

@@ -117,9 +117,10 @@ exception should not fail a build), a missing body, and a subject over 150
 characters.
 
 The first six commits in this repo predate the convention. They are named in
-`PRE_CONVENTION` in the checker rather than skipped silently, because
-force-pushing a public history to make this repo look tidier than it was would
-be the wrong trade for a project whose whole argument is honest receipts.
+`PRE_CONVENTION` in the checker rather than skipped silently, and `main` is
+protected against a force-push, so that is permanent. It is the right way
+round: a tidier history would have lied about how this repo was written, and a
+protection that bends for the maintainer is not one.
 
 ## Licence
 

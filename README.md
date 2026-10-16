@@ -273,8 +273,8 @@ baselined.
 The commit convention is held the same way, by
 [`enforce/commit-check.mjs`](enforce/commit-check.mjs) — a convention written down and never
 checked is the same defect one level up. The six commits that predate it are
-named in the checker rather than skipped silently, because force-pushing a
-public history to look tidier is not a trade this repo should make.
+named in the checker rather than skipped silently, and `main` is protected
+against a force-push, so that record is permanent.
 
 ## Contributing
 
