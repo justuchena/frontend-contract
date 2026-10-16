@@ -203,6 +203,12 @@ corrected in place: see FC-011 above.
 ### As a Claude Code plugin
 
 ```
+/plugin install frontend-contract --marketplace justuchena/frontend-contract
+```
+
+On Claude Code older than 2.1.275, in two steps:
+
+```
 /plugin marketplace add justuchena/frontend-contract
 /plugin install frontend-contract
 ```
