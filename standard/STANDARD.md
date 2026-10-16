@@ -153,12 +153,21 @@ Every seam whose failure mode differs from its parent's declares its own error
 UI, and that UI offers a way out — retry, reload, dismiss — not just an
 apology.
 
-**Evidence.** Mattermost wraps per *post* and per *plugin*, passing
-`clearError` to the fallback so recovery happens in place. affine has roughly
-ten such seams. Outline's boundary detects a stale-chunk error and reloads
-once, guarded against repeating. And the anti-rule is as valuable as the rule,
-from my own `Helios` conventions: *not around every leaf, because that turns
-one failure into a page of small apologetic boxes.*
+**Evidence.** Mattermost has exactly two boundary implementations in its
+webapp and **no app-root boundary at all**, which is the interesting part: both
+sit at interior seams. One is a HOC with a single consumer, the post
+(`channels/src/components/post/post_error_boundary.tsx:14`), whose fallback
+receives `clearError` and hands it to a retry button at `:23`. The other is a
+separate class for plugins
+(`channels/src/plugins/pluggable/error_boundary.tsx:41`) with its own
+`clearErrorState` wired to a click at `:68`. I first wrote this up as one
+mechanism wrapping posts and plugins alike; it is two mechanisms, and the HOC's
+reach is one component.
+
+affine has roughly ten such seams. Outline's boundary detects a stale-chunk
+error and reloads once, guarded against repeating. And the anti-rule is as
+valuable as the rule, from my own `Helios` conventions: *not around every leaf,
+because that turns one failure into a page of small apologetic boxes.*
 
 **Framework note.** "A boundary at each feature root" is a React phrasing. In a
 file-routed framework the equivalent is a per-route error page — immich uses
