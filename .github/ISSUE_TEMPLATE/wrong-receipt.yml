@@ -1,0 +1,35 @@
+name: A receipt is wrong
+description: A cited file does not say what the standard claims it says
+labels: ["receipt"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Writing `refs/` broke nine of my own claims, two of them in the
+        published standard, and both are corrected in place with the
+        correction visible. A repo whose argument is that people believe
+        rules are enforced when they are not cannot be precious about its
+        own receipts, so this is the report I most want.
+
+  - type: input
+    id: claim
+    attributes:
+      label: Where the claim is
+      placeholder: standard/STANDARD.md FC-006, or refs/outline.md
+    validations:
+      required: true
+
+  - type: textarea
+    id: quote
+    attributes:
+      label: What it claims
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: What the source actually says
+      description: Repository, file, line, and the commit or tag you read it at. A receipt beats an impression.
+    validations:
+      required: true

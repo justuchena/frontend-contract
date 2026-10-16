@@ -237,6 +237,10 @@ standard is enforced in review as well as in CI.
 
 Node 18 or newer. No dependencies, required or optional.
 
+> **Not on npm yet.** The manifest is prepared as
+> `@justuchena/frontend-contract` — scoped, to match its sibling. Until it is
+> published, clone it.
+
 ## This repo under its own standard
 
 `npm run verify` runs the checker's tests, the staleness check on the plugin's
@@ -260,9 +264,29 @@ own. Writing that file found one real violation in the checker itself — an
 empty `catch` with no comment, which is FC-010 — and it is fixed rather than
 baselined.
 
-[`CONTRIBUTING.md`](CONTRIBUTING.md) has the bar for a thirteenth rule: four or more
-independently maintained production frontends that already do it, named by
-file and line.
+The commit convention is held the same way, by
+[`enforce/commit-check.mjs`](enforce/commit-check.mjs) — a convention written down and never
+checked is the same defect one level up. The six commits that predate it are
+named in the checker rather than skipped silently, because force-pushing a
+public history to look tidier is not a trade this repo should make.
+
+## Contributing
+
+[`CONTRIBUTING.md`](CONTRIBUTING.md) has the bar for a thirteenth rule, and it is high: four or
+more independently maintained production frontends that already do it, named
+by repository, file and line, plus the failure it prevents, a fixture case and
+the deliberate-OK beside it. I did not choose the twelve and I cannot choose
+the thirteenth.
+
+**The most valuable contribution is showing that a receipt of mine is false.**
+There is an issue template for exactly that, and a false positive is worth
+more than a feature.
+
+```bash
+npm run verify    # the checker's tests, the skill mirror, this repo under its own rules, the commit convention
+```
+
+Also: [`SECURITY.md`](SECURITY.md), [`CODE_OF_CONDUCT.md`](CODE_OF_CONDUCT.md), [`CHANGELOG.md`](CHANGELOG.md).
 
 ## Related
 

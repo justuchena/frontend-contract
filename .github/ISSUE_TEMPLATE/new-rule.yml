@@ -1,0 +1,61 @@
+name: Propose a rule
+description: A thirteenth rule, or a change to one of the twelve
+labels: ["rule"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        I did not choose the twelve rules and I cannot choose the thirteenth
+        either. Each is a decision four or more independently maintained
+        production frontends already made the same way, read at source.
+
+        That is the only authority this repo has: it is prescriptive and
+        zero-config, so it has no design doc to point at when someone asks
+        "who says?" One rule resting on taste costs the other twelve their
+        standing.
+
+  - type: textarea
+    id: references
+    attributes:
+      label: Four or more production frontends that already do it
+      description: Repository, file and line for each. Not blog posts, not framework docs, not a style guide — source. Where the references disagree, the standard stays quiet.
+      placeholder: |
+        1. owner/repo — path/to/file.ts:122
+        2. …
+    validations:
+      required: true
+
+  - type: textarea
+    id: failure
+    attributes:
+      label: What goes wrong without it
+      description: Concretely, in the order it happens. "The model invents a second fetch path per file" beats "it is cleaner".
+    validations:
+      required: true
+
+  - type: textarea
+    id: deliberate-ok
+    attributes:
+      label: The deliberate-OK
+      description: Something that looks like a violation and must NOT fire. This is the part people skip and the part that decides whether the rule survives a real codebase.
+    validations:
+      required: true
+
+  - type: dropdown
+    id: level
+    attributes:
+      label: How would it be held?
+      options:
+        - "🔒 build — a script or a type fails, and the rule cannot drift"
+        - "🧪 test — a test asserts it"
+        - "👁 review — a human has to look (and that is a confession the check is not built)"
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: fixture
+    attributes:
+      label: Before a PR
+      options:
+        - label: I can add a violation to `enforce/fixture/` and an assertion to `enforce/test.mjs`
+        - label: I have read the bar in CONTRIBUTING.md and `standard/NEXT.md`

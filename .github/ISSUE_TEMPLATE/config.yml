@@ -1,0 +1,8 @@
+blank_issues_enabled: true
+contact_links:
+  - name: A receipt in the standard is wrong
+    url: https://github.com/justuchena/frontend-contract/issues/new?labels=receipt&template=wrong-receipt.yml
+    about: A cited file no longer says what I said it says, or a count is off. The most valuable report there is.
+  - name: The rules a checker cannot hold yet
+    url: https://github.com/justuchena/frontend-contract/blob/main/standard/NEXT.md
+    about: Five type-aware rules with public receipts, waiting on a checker. Read this before proposing one.

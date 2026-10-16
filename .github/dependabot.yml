@@ -1,0 +1,11 @@
+# This repo ships no dependencies at all, required or optional, so the only
+# drift worth watching is the one place a reader never looks: pinned action
+# versions in the workflow.
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: monthly
+    commit-message:
+      prefix: "chore(ci)"

@@ -1,0 +1,27 @@
+name: Bug
+description: The checker crashes, miscounts, or behaves wrongly
+labels: ["bug"]
+body:
+  - type: textarea
+    id: command
+    attributes:
+      label: The command you ran
+      render: shell
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: What you expected, and what happened
+      description: Include the exit status if that is the surprising part — `echo $?` on its own line, not through a pipe.
+    validations:
+      required: true
+
+  - type: input
+    id: node
+    attributes:
+      label: Node version
+      placeholder: "node --version"
+    validations:
+      required: true

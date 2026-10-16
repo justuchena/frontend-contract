@@ -82,6 +82,45 @@ fires because the fixture's `.tsx` files live inside a repo that has no
 TypeScript of its own. If your change moves them, rewrite it with `npm run
 baseline` and say in the PR why the new set is right.
 
+## Commits
+
+[Conventional Commits](https://www.conventionalcommits.org), checked:
+
+```
+type(scope): subject
+
+A body that explains why. The diff already shows the what.
+```
+
+```bash
+node enforce/commit-check.mjs --range origin/main..HEAD
+git config core.hooksPath .githooks   # or check it as you write it
+```
+
+**Types** — `feat` `fix` `refactor` `docs` `test` `chore` `style` `build`
+`ci` `perf` `revert`.
+
+**Scopes** — `repo` `standard` `next` `refs` `enforce` `fixture` `skill`
+`plugin` `licence` `deps` `ci`. Several are allowed when a change genuinely
+crosses areas (`docs(standard,refs): …`). A scope outside the list usually
+means the change is wider than it looks, so add one only when a real area
+appears.
+
+**`!` before the colon** for a breaking change: `feat(enforce)!: …`.
+
+What the check fails on: a subject that does not match the format, an unknown
+type or scope, a full stop at the end of the subject, `Update`/`changes`/`wip`
+as the opening word, a missing blank line before the body, and a
+`Co-Authored-By` trailer. What it only warns about: sentence case (a rule id
+or a filename is a legitimate exception, and a check that cannot hold its own
+exception should not fail a build), a missing body, and a subject over 150
+characters.
+
+The first six commits in this repo predate the convention. They are named in
+`PRE_CONVENTION` in the checker rather than skipped silently, because
+force-pushing a public history to make this repo look tidier than it was would
+be the wrong trade for a project whose whole argument is honest receipts.
+
 ## Licence
 
 Apache-2.0. By contributing you agree your contribution is licensed under it.

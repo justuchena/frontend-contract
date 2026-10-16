@@ -24,7 +24,8 @@
     "test": "node enforce/test.mjs",
     "skill": "node enforce/derive-skill.mjs",
     "baseline": "node enforce/frontend-check.mjs . --write-baseline enforce/self-baseline.json",
-    "verify": "node enforce/test.mjs && node enforce/derive-skill.mjs --check && node enforce/frontend-check.mjs . --baseline enforce/self-baseline.json"
+    "verify": "node enforce/test.mjs && node enforce/derive-skill.mjs --check && node enforce/frontend-check.mjs . --baseline enforce/self-baseline.json && node enforce/commit-check.mjs --range all",
+    "commits": "node enforce/commit-check.mjs --range all"
   },
   "keywords": [
     "frontend",
@@ -37,5 +38,13 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/justuchena/frontend-contract.git"
+  },
+  "bugs": {
+    "url": "https://github.com/justuchena/frontend-contract/issues"
+  },
+  "homepage": "https://github.com/justuchena/frontend-contract#readme",
+  "author": {
+    "name": "Uchenna Ngozi",
+    "url": "https://github.com/justuchena"
   }
 }

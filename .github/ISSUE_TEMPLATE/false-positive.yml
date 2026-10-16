@@ -1,0 +1,42 @@
+name: False positive
+description: A rule fired on something legitimate
+labels: ["false-positive"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        The most valuable report there is. A prescriptive checker that cries
+        wolf gets uninstalled, so these are fixed ahead of new rules. The
+        first FC-004 flagged 68 legitimate `goto` calls in immich and FC-007
+        produced 44 false findings in PostHog; both were narrowed because of
+        it.
+
+  - type: input
+    id: rule
+    attributes:
+      label: Which rule fired
+      placeholder: FC-001 … FC-012
+    validations:
+      required: true
+
+  - type: textarea
+    id: source
+    attributes:
+      label: The source it fired on
+      description: The smallest snippet that reproduces it. Include the surrounding lines if a comment or a string literal is involved — the checker masks both, and a bug in the masking is worth knowing about.
+      render: tsx
+    validations:
+      required: true
+
+  - type: textarea
+    id: why-legit
+    attributes:
+      label: Why it is legitimate
+    validations:
+      required: true
+
+  - type: input
+    id: node
+    attributes:
+      label: Node version
+      placeholder: "node --version"
