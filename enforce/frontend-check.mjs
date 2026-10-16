@@ -56,6 +56,25 @@ function mask(src) {
   return { masked: out.join(""), lineHasComment };
 }
 
+function maskComments(src) {
+  const out = Array.from(src);
+  let i = 0;
+  const n = src.length;
+  const blank = (a, b) => { for (let k = a; k < b; k++) if (out[k] !== "\n") out[k] = " "; };
+  while (i < n) {
+    const c = src[i], d = src[i + 1];
+    if (c === "/" && d === "/") { let j = i; while (j < n && src[j] !== "\n") j++; blank(i, j); i = j; continue; }
+    if (c === "/" && d === "*") { let j = i + 2; while (j < n && !(src[j] === "*" && src[j + 1] === "/")) j++; blank(i, Math.min(j + 2, n)); i = j + 2; continue; }
+    if (c === '"' || c === "'" || c === "`") {
+      let j = i + 1;
+      while (j < n) { if (src[j] === "\\") { j += 2; continue; } if (src[j] === c) break; j++; }
+      i = j + 1; continue;
+    }
+    i++;
+  }
+  return out.join("");
+}
+
 const lineOf = (src, index) => src.slice(0, index).split("\n").length;
 
 function matchBrace(masked, open) {
@@ -116,6 +135,47 @@ const fileRules = [
         const sets = /\bset[A-Z]\w*\b/.test(body);
         if (fetches && sets) {
           push(lineOf(masked, m.index), "server data fetched into component state — it belongs in a cache that knows it is server data");
+        }
+      }
+    },
+  },
+  {
+    id: "FC-004",
+    name: "url-owner",
+    // The router owns the URL. A write to it from something that is not a route
+    // gives the URL a second owner, and the two disagree on refresh.
+    appliesTo: (p) => !/(^|\/)(routes?|pages?|app)(\/|$)/.test(p) && !/\+page|\+layout|\.route\./.test(p),
+    run({ masked, push }) {
+      const writes = [
+        [/\bsetSearchParams\s*\(/g, "setSearchParams outside a route — URL state gets one owner, at the route"],
+        [/\bhistory\.replaceState\s*\(/g, "a history.replaceState outside a route — URL state gets one owner, at the route"],
+        [/\bwindow\.location\.search\s*=/g, "a query-string write outside a route — URL state gets one owner, at the route"],
+      ];
+      for (const [re, msg] of writes) {
+        let m;
+        while ((m = re.exec(masked))) push(lineOf(masked, m.index), msg);
+      }
+    },
+  },
+  {
+    id: "FC-007",
+    name: "error-seam",
+    // Narrow on purpose: a Suspense boundary declares that this subtree can be
+    // in a non-ready state, and the failed case needs an answer in the same place.
+    appliesTo: (p) => /\.(tsx|jsx)$/.test(p) && (/(^|\/)(routes?|pages?)(\/|$)/.test(p) || /\.route\.|createBrowserRouter|RouteObject/.test(p)),
+    run({ masked, push }) {
+      const hasBoundary = /ErrorBoundary|errorElement|componentDidCatch|getDerivedStateFromError|withErrorBoundary/.test(masked);
+      if (hasBoundary) return;
+      const re = /<Suspense\b/g;
+      let m;
+      while ((m = re.exec(masked))) {
+        push(lineOf(masked, m.index), "a Suspense boundary with no error answer beside it — the pending case is handled and the failed case is not");
+      }
+      const routes = /\belement\s*:/g;
+      if (/createBrowserRouter|createRoutesFromElements|RouteObject/.test(masked)) {
+        let r;
+        while ((r = routes.exec(masked))) {
+          push(lineOf(masked, r.index), "a route with no errorElement — a route whose failure differs from its parent's declares its own error UI");
         }
       }
     },
@@ -228,6 +288,23 @@ function repoRules(root, files) {
     add("FC-009", "codegen-gate", ".github/workflows", "generated output but no drift gate — regenerate in CI and fail on a diff");
   }
 
+  // FC-008 — a floating promise is an error. Delegated to the type-aware linter,
+  // so what is checkable here is whether the project turned it on.
+  const tsish = files.some((f) => /\.tsx?$/.test(f));
+  if (tsish) {
+    let lintCfg = "";
+    for (const f of readdirSync(root)) {
+      if (/^(eslint\.config\.|\.eslintrc|biome\.json|\.oxlintrc)/.test(f)) {
+        try { lintCfg += readFileSync(join(root, f), "utf8") + "\n"; } catch {}
+      }
+    }
+    const pkgLint = [pkg.eslintConfig, pkg.biome].filter(Boolean).map((o) => JSON.stringify(o)).join("\n");
+    const hay = lintCfg + pkgLint;
+    if (hay.trim() && !/no-floating-promises|noFloatingPromises/.test(hay)) {
+      add("FC-008", "floating-promise", "eslint.config", "no-floating-promises is not enabled — turn it on in your linter with ignoreVoid: false; this checker will not reimplement it");
+    }
+  }
+
   // FC-011 — a check that reports must exit non-zero
   const scriptDir = join(root, "scripts");
   if (existsSync(scriptDir)) {
@@ -235,9 +312,10 @@ function repoRules(root, files) {
       if (!/\.(mjs|cjs|js|ts)$/.test(f)) continue;
       const p = join(scriptDir, f);
       if (!statSync(p).isFile()) continue;
-      const src = readFileSync(p, "utf8");
+      const src = maskComments(readFileSync(p, "utf8"));
       const reports = /finding|violation|✗|offend|unenforced|FAIL|error\(/i.test(src);
-      const fails = /process\.exitCode\s*=\s*[1-9]|process\.exit\(\s*[1-9]|throw new/.test(src);
+      const fails = /process\.exitCode\s*=|process\.exit\s*\(|throw new|process\.exitCode\b/.test(src)
+        || /\breturn\s+[1-9]/.test(src);
       if (reports && !fails) {
         add("FC-011", "silent-check", `scripts/${f}`, "reports findings but can never exit non-zero — a check that cannot fail is documentation");
       }

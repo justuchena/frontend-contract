@@ -24,13 +24,19 @@ const expected = [
   ["FC-001", "src/features/billing/components/invoice-list.tsx", 12],
   ["FC-002", "src/features/billing/components/invoice-list.tsx", 12],
   ["FC-003", "src/features/billing/components/invoice-list.tsx", 11],
+  ["FC-004", "src/features/billing/components/invoice-filters.tsx", 6],
   ["FC-005", "package.json", 0],
   ["FC-006", "src/features/billing/components/invoice-list.tsx", 3],
+  ["FC-007", "src/routes/threads.route.tsx", 5],
+  ["FC-008", "eslint.config", 0],
   ["FC-009", ".github/workflows", 0],
   ["FC-010", "src/features/billing/components/invoice-list.tsx", 20],
   ["FC-011", "scripts/audit.mjs", 0],
   ["FC-012", "scripts/audit.mjs", 0],
 ];
+
+// All twelve rules have a pair. If this count drops, a rule stopped working.
+assert.equal(new Set(expected.map((e) => e[0])).size, 12, "every rule must have a fixture case");
 
 const { out, code } = run(["--json", "."]);
 const { findings } = JSON.parse(out);
@@ -48,8 +54,11 @@ for (const id of new Set(expected.map((e) => e[0]))) {
 
 // The deliberate patterns. Each was reported by an early version of the rule beside it.
 const silent = [
-  "src/features/billing/api/invoices.ts",       // fetch, Authorization, Bearer, base URL — all correct in the data layer
-  "src/features/inbox/components/thread.tsx",   // the same strings in copy, masked
+  "src/features/billing/api/invoices.ts",            // fetch, Authorization, Bearer, base URL: all correct in the data layer
+  "src/features/inbox/components/thread.tsx",        // the same strings in copy, masked
+  "src/routes/invoices.route.tsx",                   // the route may write the URL, it owns it
+  "src/features/inbox/components/thread-shell.tsx",  // Suspense with an error answer beside it
+  "src/shared/error-boundary.tsx",
   "src/features/inbox/index.ts",
   "src/features/billing/index.ts",
 ];
@@ -71,7 +80,7 @@ assert.equal(w.code, 0, "--write-baseline exits 0");
 assert.ok(existsSync(tmp), "baseline file written");
 const b = run(["--baseline", tmp, "."]);
 assert.equal(b.code, 0, "a fully baselined tree passes");
-assert.match(b.out, /9 baselined/, "the baseline reports what it suppressed");
+assert.match(b.out, /12 baselined/, "the baseline reports what it suppressed");
 rmSync(tmp, { force: true });
 
 // --rule narrows to one rule.

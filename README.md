@@ -3,7 +3,7 @@
 # frontend-contract
 
 **Twelve rules four production frontends already agree on, the evidence for
-each, and a zero-dependency checker that holds the ones a machine can hold.**
+each, and a zero-dependency checker that holds all twelve.**
 
 For anyone building a frontend with an AI agent and getting back work that is
 locally plausible and structurally incoherent.
@@ -12,7 +12,7 @@ locally plausible and structurally incoherent.
 [![node](https://img.shields.io/badge/node-%E2%89%A518-brightgreen.svg)](package.json)
 [![dependencies: none](https://img.shields.io/badge/dependencies-none-brightgreen.svg)](package.json)
 [![rules: 12](https://img.shields.io/badge/rules-12-blue.svg)](standard/STANDARD.md)
-[![checked: 9](https://img.shields.io/badge/mechanically%20checked-9%2F12-blue.svg)](enforce/frontend-check.mjs)
+[![checked: 12](https://img.shields.io/badge/mechanically%20checked-12%2F12-blue.svg)](enforce/frontend-check.mjs)
 
 </div>
 
@@ -64,11 +64,14 @@ evidence, the enforcement level, and what each one deliberately does not say.
 Two of the twelve came from my own mistakes rather than from anyone's good
 practice:
 
-**FC-011 — a check that reports a violation exits non-zero.** My own
-`audit-architecture.mjs` printed nine unenforced feature directories and three
-stale zones, and exited 0. So did my `design-check.mjs` — no exit path in it at
-all. Both had been decorative for as long as they had existed. The checker in
-this repo rediscovered both on its first run against that tree.
+**FC-011 — a check that reports a violation exits non-zero.** This one is in the
+standard despite having no verified instance, and the story is in
+[`standard/STANDARD.md`](standard/STANDARD.md#fc-011--a-check-that-reports-a-violation-exits-non-zero):
+I believed two of my own checkers were decorative, because I measured their
+exit codes through a pipe and read `tail`'s status instead of theirs. Both are
+correct. The rule ships because the failure is cheap to detect and expensive to
+have, and because trusting a green number I had not measured properly is the
+same mistake one level up.
 
 **FC-006 — derive a boundary from a directory name or a tag, never from a
 hand-maintained list.** The nine unenforced directories above were missing from
@@ -124,32 +127,47 @@ fixed:
 
 | Tree | Findings | The honest reading |
 |---|---|---|
-| immich | 6 | A 116k-star project with excellent CI. Six direct transport calls from view code. |
-| Grafana | 2,224 | 2,159 are cross-feature deep imports — real, because Grafana enforces plugin boundaries but not feature ones. This is what the baseline is for. |
-| PostHog | 63 | Mostly transport reaching into view code. |
-| Outline | 43 | 40 are FC-001, which is the shape of a MobX store layer calling the client directly. |
+| immich | 6 | A 116k-star project with excellent CI. Six direct transport calls from view code, and nothing else. |
+| Outline | 45 | 40 are FC-001, which is the shape of a MobX store layer calling the client directly. |
+| PostHog | 87 | Transport reaching into view code, and 19 failed reads that can render as empty. |
+| Grafana | 2,228 | 2,159 are cross-feature deep imports: real, because Grafana enforces plugin boundaries but not feature ones. This is what the baseline is for. |
 
 A high count is not an insult to a codebase. Grafana's enforcement engineering
 is the best I read anywhere; it simply never wrote this particular rule down.
 
 ## Limits, stated plainly
 
-Nine of the twelve rules are mechanically checked. **FC-004** (one URL owner),
-**FC-007** (error boundaries at seams) and **FC-008** (no floating promises)
-are not, and FC-008 is already better served by `@typescript-eslint`'s
-`no-floating-promises` with `ignoreVoid: false` — use that, and this repo will
-not reimplement it.
+All twelve rules are checked, but three are checked narrowly and you should
+know how before you trust them.
 
-The checker reads source text with comments and string bodies masked. It has no
-type information, so FC-001 sees `fetch` and `axios` but not your generated
-SDK, and FC-003 is a heuristic about `useEffect` and `useState` living together.
-Rules that need to know what a module *does* — whether a submit path guards
-against double submission, whether a failed read renders an empty state — need
-type-aware analysis and are not in this release. They are the interesting half,
-and they are honestly not here yet.
+**FC-008 is delegated, not implemented.** `@typescript-eslint`'s
+`no-floating-promises` with `ignoreVoid: false` already does this properly, with
+type information this checker does not have. So the check here is whether your
+linter has the rule turned on, and the message says as much. I will not
+reimplement it worse.
 
-Every claim in this README was run, not assumed. Where I could not verify
-something I have said so.
+**FC-004 covers URL state, not navigation.** It reports `setSearchParams`,
+`history.replaceState` and a query-string assignment from outside a route. It
+deliberately says nothing about `goto` or `router.push`, because navigating is
+not owning: the first version flagged 68 legitimate `goto` calls in immich
+before I narrowed it.
+
+**FC-007 only looks at routes.** A `Suspense` in a leaf whose error boundary
+sits in a parent is correct, and flagging it produced 44 findings in PostHog
+and 12 in Outline. So the rule asks the narrower question: does a route declare
+a pending state and leave the failed one unanswered.
+
+More generally: the checker reads source text with comments and string bodies
+masked, and it has no type information. FC-001 sees `fetch` and `axios` but not
+your generated SDK. FC-003 is a heuristic about `useEffect` and `useState`
+appearing together. The rules that need to know what a module *does* — whether a
+submit path guards against double submission, whether a success state was caused
+by a verified response — are in
+[`standard/NEXT.md`](standard/NEXT.md) with their evidence, and they are not in
+this release. They are the interesting half and they are honestly not here yet.
+
+Every claim in this README was run, not assumed. One of them was wrong and is
+corrected in place: see FC-011 above.
 
 ## Install
 

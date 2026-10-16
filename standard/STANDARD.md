@@ -223,18 +223,31 @@ logging.
 If a script prints a finding, it fails. A reporting-only mode must be an
 explicit flag, never the default.
 
-**Evidence.** This is the rule I needed most and had broken myself.
-`Helios/scripts/audit-architecture.mjs` prints nine unenforced feature
-directories, three stale zones, five orphaned modules — and exits 0. Wiring it
-into CI would have changed nothing, which means the check had been
-decorative for as long as it had existed.
+**Evidence, and a correction.** I drafted this rule believing I had a receipt
+for it in my own tree: `Helios/scripts/audit-architecture.mjs` appeared to
+print nine unenforced feature directories and exit 0. It does not. It returns
+`unenforced.length + stale.length ? 1 : 0` at `scripts/audit-architecture.mjs:148`
+and exits 1. I had measured the exit code through a pipe, so what I read was
+`tail`'s status and not the script's. The second instance I claimed, 
+`scripts/design-check.mjs`, delegates to a vendored engine that exits 1 on
+findings, which I confirmed by running it against a tree that has four.
 
-The same failure, written down by somebody else first, in Grafana's CI:
-*"`css:probe` was written on 2026-08-31 and was never wired in, so it only ran
-when somebody remembered — which is the same failure mode as a design
-document."*
+So: **no verified instance of this rule being broken exists in any tree I
+audited.** The rule ships anyway, for two reasons. The failure mode is cheap to
+detect and catastrophic when present, because a decorative check is worse than
+no check: it buys confidence it has not earned. And the near miss is itself the
+argument. I spent a day believing two working checks were broken because I
+trusted a green number I had not measured correctly, which is precisely the
+class of error this rule exists to prevent, one level up.
 
-A check that cannot fail is documentation wearing a script's costume.
+The related failure *is* attested, in Grafana's own CI, and it is covered by
+FC-005 rather than here: *"`css:probe` was written on 2026-08-31 and was never
+wired in, so it only ran when somebody remembered, which is the same failure
+mode as a design document."* In my own tree the same thing is true and
+verified: `audit:arch` and `check:imports` both work and neither appears in CI.
+
+A check that cannot fail is documentation wearing a script's costume. A check
+that can fail and runs nowhere is the same thing with extra steps.
 
 ## FC-012 — The check that gates the build is itself tested, in the same job
 
