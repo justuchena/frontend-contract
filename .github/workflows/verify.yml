@@ -1,6 +1,12 @@
 # FC-012 says the check that gates the build is itself tested, in the same job.
 # This repo would be the fourth project in refs/ to document a gate nothing
 # runs, so these triggers are real and the test runs before the checker does.
+#
+# Note: Actions is currently locked on this account for a billing reason, so
+# these triggers fire and GitHub declines to start the jobs. The triggers are
+# deliberately left real rather than switched to workflow_dispatch, so this
+# runs the moment that clears; README.md says so plainly instead of carrying
+# a badge.
 name: verify
 
 on:

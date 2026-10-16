@@ -8,7 +8,6 @@ each, and a zero-dependency checker that holds all twelve.**
 For anyone building a frontend with an AI agent and getting back work that is
 locally plausible and structurally incoherent.
 
-[![verify](https://github.com/justuchena/frontend-contract/actions/workflows/verify.yml/badge.svg)](https://github.com/justuchena/frontend-contract/actions/workflows/verify.yml)
 [![licence: Apache-2.0](https://img.shields.io/badge/licence-Apache--2.0-blue.svg)](LICENSE)
 [![node](https://img.shields.io/badge/node-%E2%89%A518-brightgreen.svg)](package.json)
 [![dependencies: none](https://img.shields.io/badge/dependencies-none-brightgreen.svg)](package.json)
@@ -241,10 +240,18 @@ Node 18 or newer. No dependencies, required or optional.
 ## This repo under its own standard
 
 `npm run verify` runs the checker's tests, the staleness check on the plugin's
-skill copy, and the repo against all twelve rules. CI runs it on every push
-and pull request across Node 18, 20, 22 and 24, and asserts the fixture's exit
-status without a pipe — reading a pipeline's status is how a false receipt got
-into the standard once already.
+skill copy, and the repo against all twelve rules.
+[`verify.yml`](.github/workflows/verify.yml) runs the same thing on every push and pull request
+across Node 18, 20, 22 and 24, and asserts the fixture's exit status without a
+pipe — reading a pipeline's status is how a false receipt got into the standard
+once already.
+
+**And right now GitHub refuses to start it**, because Actions is locked on my
+account for a billing reason. So the workflow is wired and queued and nothing
+has executed it, which is exactly the defect FC-012 is about, and there is no
+green badge here because there is nothing to be green about yet. Until that
+clears, `npm run verify` locally is the gate, and that is a weaker claim than
+the one this repo would like to make.
 
 The findings this repo keeps on purpose are in `enforce/self-baseline.json`:
 the fixture's one per rule, plus FC-005 on `package.json`, which fires because

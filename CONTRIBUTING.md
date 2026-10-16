@@ -71,9 +71,10 @@ npm run verify
 ```
 
 That runs the checker's own tests, the staleness check on the plugin's skill
-copy, and the repo under its own standard. It is the same thing CI runs, and
-CI runs it on every push and pull request — a gate nothing runs is the defect
-this repo was written about.
+copy, and the repo under its own standard. It is the same thing CI runs on every push and
+pull request — except that Actions is locked on my account for a billing
+reason and GitHub is declining to start the jobs, so for now your local run is
+the only one that happens. Say in the PR that it passed.
 
 `enforce/self-baseline.json` records the findings this repo keeps on purpose:
 the fixture's one-per-rule violations, plus FC-005 on `package.json`, which
