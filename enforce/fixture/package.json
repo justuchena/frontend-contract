@@ -1,0 +1,9 @@
+{
+  "name": "fixture",
+  "private": true,
+  "scripts": {
+    "lint": "eslint .",
+    "build": "vite build",
+    "generate:api": "openapi-typescript schema.yaml -o src/api/generated/schema.d.ts"
+  }
+}

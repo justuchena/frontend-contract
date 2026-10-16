@@ -1,0 +1,17 @@
+{
+  "name": "@justuchena/frontend-contract",
+  "version": "0.1.0",
+  "description": "The frontend engineering standard, enforced. Twelve rules four production frontends already agree on, and a zero-dependency checker that holds the ones a machine can hold.",
+  "license": "Apache-2.0",
+  "type": "module",
+  "engines": { "node": ">=18" },
+  "bin": { "frontend-check": "enforce/frontend-check.mjs" },
+  "files": ["enforce", "standard", "SKILL.md", "AGENTS.md", "NOTICE"],
+  "scripts": {
+    "check": "node enforce/frontend-check.mjs",
+    "test": "node enforce/test.mjs",
+    "verify": "node enforce/test.mjs && node enforce/frontend-check.mjs --rule FC-011 --rule FC-012 ."
+  },
+  "keywords": ["frontend", "architecture", "lint", "standard", "agents", "code-quality"],
+  "repository": { "type": "git", "url": "git+https://github.com/justuchena/frontend-contract.git" }
+}
