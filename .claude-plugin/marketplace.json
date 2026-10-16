@@ -1,7 +1,7 @@
 {
   "name": "frontend-contract",
   "description": "The frontend engineering standard, enforced. Twelve rules four production frontends already agree on, eight reference write-ups read at source, and a zero-dependency checker that holds all twelve.",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "owner": {
     "name": "Uchenna Ngozi",
     "url": "https://github.com/justuchena"

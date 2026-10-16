@@ -1,5 +1,32 @@
 # Changelog
 
+## 0.1.1 — 2026-10-16
+
+Nothing about the standard changed. This is the open-source furniture the
+first release shipped without, and one thing that was simply broken.
+
+- **The commit convention is held, not just stated.**
+  `enforce/commit-check.mjs` checks Conventional Commits with this repo's
+  scopes, wired into `npm run verify`, a CI job, and `.githooks/commit-msg`.
+  A convention written down and never run is the defect this repo is about,
+  one level up. The six commits that predate it are named in
+  `PRE_CONVENTION` rather than skipped silently: rewriting a published
+  history so the repo looked tidier than it was is the wrong trade here.
+- **`enforce/*.mjs` were mode 644** while `package.json` declares a `bin`, so
+  an installed `frontend-check` would not have been executable.
+- **`package.json`** had no `author`, `homepage` or `bugs` url, and the
+  repository's homepage field on GitHub pointed at `design-contract`.
+- **The README promised an npm package** without saying it is unpublished.
+- Added `SECURITY.md` — which names the two real surfaces, a baseline's paths
+  and the ref interpolated into `git diff` for `--since`, and notes that the
+  checker loads no config file, so unlike a linter it never executes your
+  code — plus `CODE_OF_CONDUCT.md`, this changelog, `CODEOWNERS`, a
+  Dependabot config for the pinned actions, a PR template that asks for the
+  four references, and issue templates, one of them for a receipt of mine
+  being wrong.
+- Private vulnerability reporting is now enabled on the repository, which
+  `SECURITY.md` had been telling people to use.
+
 ## 0.1.0 — 2026-10-16
 
 First release. Twelve rules, the evidence for each read at source, and a
@@ -52,7 +79,3 @@ Shipped with the release, after the same failure turned up here:
   manifests behind it, so the command failed for anyone who tried it.
   `.claude-plugin/` is here, and `enforce/derive-skill.mjs` derives the
   plugin's skill copy from the root `SKILL.md` with a staleness check.
-- **The bar, and the convention.** `CONTRIBUTING.md` states what a thirteenth
-  rule needs, and `enforce/commit-check.mjs` holds the commit convention the
-  same way the standard asks of everyone else. The six commits before it are
-  named in `PRE_CONVENTION` rather than quietly skipped.

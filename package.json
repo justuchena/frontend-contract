@@ -1,6 +1,6 @@
 {
   "name": "@justuchena/frontend-contract",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "The frontend engineering standard, enforced. Twelve rules four production frontends already agree on, and a zero-dependency checker that holds the ones a machine can hold.",
   "license": "Apache-2.0",
   "type": "module",
