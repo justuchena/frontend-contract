@@ -1,0 +1,21 @@
+{
+  "name": "frontend-contract",
+  "description": "The frontend engineering standard, enforced. Twelve rules four production frontends already agree on, eight reference write-ups read at source, and a zero-dependency checker that holds all twelve.",
+  "version": "0.1.0",
+  "owner": {
+    "name": "Uchenna Ngozi",
+    "url": "https://github.com/justuchena"
+  },
+  "metadata": {
+    "repository": "https://github.com/justuchena/frontend-contract"
+  },
+  "plugins": [
+    {
+      "name": "frontend-contract",
+      "displayName": "frontend-contract",
+      "description": "Build a frontend that is structurally coherent. Carries the twelve-rule standard with its evidence, eight production-frontend references, and a zero-dependency checker that needs no configuration.",
+      "source": "./",
+      "homepage": "https://github.com/justuchena/frontend-contract"
+    }
+  ]
+}

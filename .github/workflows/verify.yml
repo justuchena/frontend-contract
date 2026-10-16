@@ -1,0 +1,89 @@
+# FC-012 says the check that gates the build is itself tested, in the same job.
+# This repo would be the fourth project in refs/ to document a gate nothing
+# runs, so these triggers are real and the test runs before the checker does.
+name: verify
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        # 18 is the floor package.json claims. The checker's walker is
+        # hand-written so the claim holds: readdirSync({recursive:true})
+        # landed in 18.17 and globSync in 22.
+        node: [18, 20, 22, 24]
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+
+      # FC-012: the test comes first, in this job, not a separate one.
+      - name: The checker is tested
+        run: node enforce/test.mjs
+
+      # FC-011: a check that reports a violation exits non-zero. Asserting the
+      # status directly, with no pipe — reading a pipeline's exit status is the
+      # mistake that put a false receipt in the standard once already.
+      - name: The checker fails the fixture, and says why
+        run: |
+          set +e
+          out=$(node enforce/frontend-check.mjs enforce/fixture)
+          status=$?
+          set -e
+          echo "$out"
+          test "$status" = "1" \
+            || { echo "::error::the fixture is broken on purpose and the checker exited $status"; exit 1; }
+          echo "$out" | grep -q "12 finding(s) in 7 file(s)" \
+            || { echo "::error::the fixture no longer produces one finding per rule"; exit 1; }
+
+      # The repo under its own standard, with its deliberate findings baselined
+      # the way the adoption section tells everyone else to do it. The only
+      # non-fixture entry is package.json FC-005: there is no TypeScript here,
+      # and the rule fires because the fixture's .tsx files live inside the repo.
+      - name: The repo under its own standard
+        run: node enforce/frontend-check.mjs . --baseline enforce/self-baseline.json
+
+      - name: The baseline is not stale
+        run: |
+          node enforce/frontend-check.mjs . --write-baseline /tmp/baseline.json >/dev/null
+          diff -u enforce/self-baseline.json /tmp/baseline.json \
+            || { echo "::error::enforce/self-baseline.json is stale — rewrite it with npm run baseline"; exit 1; }
+
+      - name: The plugin's skill copy is not stale
+        run: node enforce/derive-skill.mjs --check
+
+  links:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Every relative link in the docs resolves
+        run: |
+          fail=0
+          for f in README.md SKILL.md AGENTS.md CONTRIBUTING.md NOTICE \
+                   standard/*.md refs/*.md; do
+            [ -f "$f" ] || continue
+            dir=$(dirname "$f")
+            grep -oE '\]\([^)#][^)]*\)' "$f" | sed -E 's/^\]\(//; s/\)$//' | while read -r link; do
+              case "$link" in http*|mailto:*) continue ;; esac
+              target="${link%%#*}"
+              [ -z "$target" ] && continue
+              if [ ! -e "$dir/$target" ] && [ ! -e "$target" ]; then
+                echo "::error file=$f::broken link -> $link"
+                exit 1
+              fi
+            done || fail=1
+          done
+          [ "$fail" = 0 ] || exit 1
+          echo "all relative links resolve"

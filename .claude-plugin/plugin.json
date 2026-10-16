@@ -1,0 +1,24 @@
+{
+  "name": "frontend-contract",
+  "version": "0.1.0",
+  "description": "Build a frontend that is structurally coherent. Twelve rules four independently maintained production frontends already agree on — one server client, a data layer, server data in a cache, URL state owned at the route, derived module boundaries, error seams, and gates that can actually fail — the evidence for each, and a zero-dependency checker that holds all twelve.",
+  "author": {
+    "name": "Uchenna Ngozi",
+    "url": "https://github.com/justuchena"
+  },
+  "homepage": "https://github.com/justuchena/frontend-contract#readme",
+  "repository": "https://github.com/justuchena/frontend-contract",
+  "license": "Apache-2.0",
+  "keywords": [
+    "frontend",
+    "architecture",
+    "lint",
+    "standard",
+    "agents",
+    "code-quality",
+    "code-review",
+    "react",
+    "typescript"
+  ],
+  "skills": "./skills"
+}

@@ -1,6 +1,6 @@
 # frontend-contract — rules for an agent writing a frontend
 
-Twelve rules, with the reasoning in `standard/STANDARD.md`. Nine are checked by
+Twelve rules, with the reasoning in `standard/STANDARD.md`. All twelve are checked by
 `enforce/frontend-check.mjs`, which needs no configuration.
 
 Run the checker before you report work finished:

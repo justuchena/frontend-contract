@@ -1,0 +1,18 @@
+{
+  "enforce/fixture/src/features/billing/components/invoice-filters.tsx": {
+    "FC-004": 1
+  },
+  "enforce/fixture/src/features/billing/components/invoice-list.tsx": {
+    "FC-001": 1,
+    "FC-002": 1,
+    "FC-003": 1,
+    "FC-006": 1,
+    "FC-010": 1
+  },
+  "enforce/fixture/src/routes/threads.route.tsx": {
+    "FC-007": 1
+  },
+  "package.json": {
+    "FC-005": 1
+  }
+}

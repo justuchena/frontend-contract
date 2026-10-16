@@ -1,12 +1,12 @@
 ---
 name: frontend-contract
-description: Build a frontend that is structurally coherent. Use when creating or extending any web application's structure, data layer, state, module boundaries, flows, error handling or CI gates; when setting up a new frontend project; when reviewing frontend architecture; or when deciding where a file, a fetch or a piece of state belongs. Carries twelve rules that four production frontends already agree on, the evidence for each, and a zero-dependency checker for the nine a machine can hold.
+description: Build a frontend that is structurally coherent. Use when creating or extending any web application's structure, data layer, state, module boundaries, flows, error handling or CI gates; when setting up a new frontend project; when reviewing frontend architecture; or when deciding where a file, a fetch or a piece of state belongs. Carries twelve rules that four production frontends already agree on, the evidence for each, and a zero-dependency checker that holds all twelve.
 license: see LICENSE and NOTICE at the repo root
 ---
 
 # frontend-contract
 
-Twelve rules, with the reasoning in `standard/STANDARD.md`. Nine are checked by
+Twelve rules, with the reasoning in `standard/STANDARD.md`. All twelve are checked by
 `enforce/frontend-check.mjs`, which needs no configuration.
 
 Run the checker before you report work finished:

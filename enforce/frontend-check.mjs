@@ -295,7 +295,12 @@ function repoRules(root, files) {
     let lintCfg = "";
     for (const f of readdirSync(root)) {
       if (/^(eslint\.config\.|\.eslintrc|biome\.json|\.oxlintrc)/.test(f)) {
-        try { lintCfg += readFileSync(join(root, f), "utf8") + "\n"; } catch {}
+        try {
+          lintCfg += readFileSync(join(root, f), "utf8") + "\n";
+        } catch {
+          // An unreadable config is the same as none here: FC-008 then reports
+          // the rule as not enabled, which is the safe direction to be wrong in.
+        }
       }
     }
     const pkgLint = [pkg.eslintConfig, pkg.biome].filter(Boolean).map((o) => JSON.stringify(o)).join("\n");

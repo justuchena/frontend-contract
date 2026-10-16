@@ -4,14 +4,38 @@
   "description": "The frontend engineering standard, enforced. Twelve rules four production frontends already agree on, and a zero-dependency checker that holds the ones a machine can hold.",
   "license": "Apache-2.0",
   "type": "module",
-  "engines": { "node": ">=18" },
-  "bin": { "frontend-check": "enforce/frontend-check.mjs" },
-  "files": ["enforce", "standard", "SKILL.md", "AGENTS.md", "NOTICE"],
+  "engines": {
+    "node": ">=18"
+  },
+  "bin": {
+    "frontend-check": "enforce/frontend-check.mjs"
+  },
+  "files": [
+    "enforce",
+    "standard",
+    "skills",
+    ".claude-plugin",
+    "SKILL.md",
+    "AGENTS.md",
+    "NOTICE"
+  ],
   "scripts": {
     "check": "node enforce/frontend-check.mjs",
     "test": "node enforce/test.mjs",
-    "verify": "node enforce/test.mjs && node enforce/frontend-check.mjs --rule FC-011 --rule FC-012 ."
+    "skill": "node enforce/derive-skill.mjs",
+    "baseline": "node enforce/frontend-check.mjs . --write-baseline enforce/self-baseline.json",
+    "verify": "node enforce/test.mjs && node enforce/derive-skill.mjs --check && node enforce/frontend-check.mjs . --baseline enforce/self-baseline.json"
   },
-  "keywords": ["frontend", "architecture", "lint", "standard", "agents", "code-quality"],
-  "repository": { "type": "git", "url": "git+https://github.com/justuchena/frontend-contract.git" }
+  "keywords": [
+    "frontend",
+    "architecture",
+    "lint",
+    "standard",
+    "agents",
+    "code-quality"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/justuchena/frontend-contract.git"
+  }
 }

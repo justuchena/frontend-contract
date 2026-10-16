@@ -8,6 +8,7 @@ each, and a zero-dependency checker that holds all twelve.**
 For anyone building a frontend with an AI agent and getting back work that is
 locally plausible and structurally incoherent.
 
+[![verify](https://github.com/justuchena/frontend-contract/actions/workflows/verify.yml/badge.svg)](https://github.com/justuchena/frontend-contract/actions/workflows/verify.yml)
 [![licence: Apache-2.0](https://img.shields.io/badge/licence-Apache--2.0-blue.svg)](LICENSE)
 [![node](https://img.shields.io/badge/node-%E2%89%A518-brightgreen.svg)](package.json)
 [![dependencies: none](https://img.shields.io/badge/dependencies-none-brightgreen.svg)](package.json)
@@ -207,6 +208,11 @@ corrected in place: see FC-011 above.
 /plugin install frontend-contract
 ```
 
+The loader scans a plugin's `skills/` directory and ignores a `SKILL.md` at
+the root, so [`skills/frontend-contract/SKILL.md`](skills/frontend-contract/SKILL.md) is derived from the
+root copy by [`enforce/derive-skill.mjs`](enforce/derive-skill.mjs), with its paths repointed and a
+staleness check in `npm run verify`. Edit the root one.
+
 ### As a skill, cloned
 
 ```bash
@@ -231,6 +237,25 @@ standard is enforced in review as well as in CI.
 ```
 
 Node 18 or newer. No dependencies, required or optional.
+
+## This repo under its own standard
+
+`npm run verify` runs the checker's tests, the staleness check on the plugin's
+skill copy, and the repo against all twelve rules. CI runs it on every push
+and pull request across Node 18, 20, 22 and 24, and asserts the fixture's exit
+status without a pipe — reading a pipeline's status is how a false receipt got
+into the standard once already.
+
+The findings this repo keeps on purpose are in `enforce/self-baseline.json`:
+the fixture's one per rule, plus FC-005 on `package.json`, which fires because
+the fixture's `.tsx` files live inside a repo that has no TypeScript of its
+own. Writing that file found one real violation in the checker itself — an
+empty `catch` with no comment, which is FC-010 — and it is fixed rather than
+baselined.
+
+[`CONTRIBUTING.md`](CONTRIBUTING.md) has the bar for a thirteenth rule: four or more
+independently maintained production frontends that already do it, named by
+file and line.
 
 ## Related
 
